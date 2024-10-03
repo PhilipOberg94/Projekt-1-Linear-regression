@@ -1,0 +1,61 @@
+---
+title: "Projekt -1- Linear Regression"
+author: "Your Name"
+date: "Date"
+format: pdf
+---
+
+# Abstract
+A brief summary of the report, including the purpose, methodology, results, and conclusions of the linear regression project focused on temperature prediction.
+
+# Introduction
+## Background
+Introduce the concept of linear regression and its importance in data analysis and machine learning. Mention the specific application of predicting room temperature using data from a temperature sensor.
+
+## Objective
+State the objective of the project, such as implementing a linear regression model to predict room temperature and comparing it to readings from a more advanced temperature sensor.
+
+## Scope
+Define the scope of the project, including the dataset used, the sensors involved, and the specific problem being addressed.
+
+# Methodology
+## Data Collection
+Describe the process of collecting data from the temperature sensor. Include details about the sensors used, the environment, and any preprocessing steps taken.
+
+## Linear Regression Model
+Explain the linear regression model, including the mathematical formulation and assumptions. Provide details on the implementation in `Linreg.cpp` and `LinReg.h`.
+
+## Implementation
+Provide details on how the model was implemented, including any software or libraries used (e.g., Python, NumPy, scikit-learn). Include code snippets from `Linreg.cpp` and `LinReg.h`.
+
+# Results
+## Model Training
+Describe the process of training the linear regression model, including the training and testing split.
+
+## Performance Metrics
+Present the metrics used to evaluate the model's performance, such as Mean Squared Error (MSE), R-squared, etc.
+
+## Visualizations
+Include plots and graphs that illustrate the model's performance, such as scatter plots with the regression line, residual plots, etc.
+
+# Discussion
+## Analysis of Results
+Interpret the results obtained from the model, discussing any patterns or insights observed.
+
+## Comparison with Advanced Sensor
+Compare the predictions from the linear regression model with the readings from the more advanced temperature sensor.
+
+## Limitations
+Discuss any limitations of the model or the dataset that may have affected the results.
+
+## Improvements
+Suggest potential improvements or future work that could enhance the model's performance.
+
+# Conclusion
+Summarize the key findings of the project, reiterating the importance of linear regression in data analysis and the insights gained from the project.
+
+# References
+List all the references and sources cited in the report, following a consistent citation style.
+
+# Appendices
+Include any additional material, such as code snippets, detailed calculations, or supplementary data, that supports the report.
