@@ -12,8 +12,15 @@ using namespace driver;
 
 namespace 
 {
-constexpr uint8_t tempSensorPin{2};
-constexpr double Vcc{5.0};    
+/********************************************************************************
+ * @brief Constants used in the embedded system.
+ *
+ * @param tempSensorPin The analog pin to read the temperature sensor.
+ * @param Vcc The supply voltage of the temperature sensor.
+ ********************************************************************************/
+
+constexpr uint8_t tempSensorPin{2}; // Temperature sensor connected to pin 2.
+constexpr double Vcc{5.0};          // Supply voltage of the temperature sensor.
 
 /********************************************************************************
  * @brief Devices used in the embedded system.
@@ -26,10 +33,18 @@ constexpr double Vcc{5.0};
  ********************************************************************************/
 GPIO errorLed{9, GPIO::Direction::Output};
 GPIO predictionButton{13, GPIO::Direction::InputPullup};
-Timer debounceTimer{Timer::Circuit::debounceTimer, 300};
-Timer predictionTimer{Timer::Circuit::predictionTimer, 60000};
-    
-double inputVoltage(const uint8_t pin)
+Timer debounceTimer{Timer::Circuit::debounceTimer, 300};        
+Timer predictionTimer{Timer::Circuit::predictionTimer, 60000};  
+
+/********************************************************************************
+ * @brief Reads the input voltage from the temperature sensor.
+ *
+ * @param pin The analog pin to read (A0 - A5 / PORTC0 - PORTC5).
+ *
+ * @return The input voltage in volts.
+ ********************************************************************************/
+
+double inputVoltage(const uint8_t pin) 
 {
     return adc::getDutyCycle(pin) * Vcc;
 }
@@ -49,7 +64,7 @@ void buttonCallback(void)
      if (predictionButton.read())
      {
          // Prediktera temperaturen.
-         // Nollställ 60-sekunderstimern.
+         // Nollstï¿½ll 60-sekunderstimern.
      }
 }
 
@@ -80,13 +95,14 @@ inline void setup(void)
     adc::init();
 
     serial::init();
-    // Träna din modell.
-    // Om träningen inte går bra, tänd errorLed och avsluta.
+
+    // Training data for linear regression.
     const container::Vector<double> trainingInput{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
     const container::Vector<double> treiningOutput{-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50};
         
     ml::LinReg linReg{0.0, 0.0, trainingInput, treiningOutput, 0.1};
     
+    // Train the model.
     if (!linReg.train(100))
     {
         errorLed.set();
@@ -94,6 +110,7 @@ inline void setup(void)
         return;
     }
     
+    // Predict the temperature. if the prediction is negative, round down, otherwise round up.
     for (const auto& input : trainingInput)
     {
         if(linReg.predict(input) < 0){

@@ -16,7 +16,7 @@ namespace ml{
     {
     }
     
-    double LinReg::getBias() const
+    double LinReg::getBias() const                      # Getters for bias, weight, trainingsetcount
     {
         return myBias;
     }
@@ -31,12 +31,12 @@ namespace ml{
         return myTrainingInput.size();
     }
 
-    double LinReg::predict(const double &input) const
+    double LinReg::predict(const double &input) const   // Prediction of the model
     {
         return myBias + myWeight * input;
     }
     
-    bool LinReg::train(const int &epochs)
+    bool LinReg::train(const int &epochs)               // How many times the training data is used to train the model
     {
         double prediction{};
         double error{};
