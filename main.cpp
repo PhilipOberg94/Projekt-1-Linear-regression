@@ -96,13 +96,13 @@ inline void setup(void)
 
     serial::init();
 
-    // Training data for linear regression.
+
     const container::Vector<double> trainingInput{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
     const container::Vector<double> treiningOutput{-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50};
         
     ml::LinReg linReg{0.0, 0.0, trainingInput, treiningOutput, 0.1};
     
-    // Train the model.
+
     if (!linReg.train(100))
     {
         errorLed.set();
@@ -110,7 +110,7 @@ inline void setup(void)
         return;
     }
     
-    // Predict the temperature. if the prediction is negative, round down, otherwise round up.
+    
     for (const auto& input : trainingInput)
     {
         if(linReg.predict(input) < 0){
