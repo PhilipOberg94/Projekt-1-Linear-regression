@@ -54,8 +54,11 @@ constexpr double Vcc{5.0};          // Supply voltage of the temperature sensor.
 GPIO errorLed{9, GPIO::Direction::Output};
 GPIO predictionButton{13, GPIO::Direction::InputPullup};
 Timer debounceTimer{Timer::Circuit::debounceTimer, 300};        
-Timer predictionTimer{Timer::Circuit::predictionTimer, 60000};  
-
+Timer predictionTimer{Timer::Circuit::predictionTimer, 60000}; 
+const container::Vector<double> trainingInput{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+const container::Vector<double> trainingOutput{-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50}; 
+ml::LinReg linReg{0.0, 0.0, trainingInput, trainingOutput, 0.1};
+    
 /********************************************************************************
  * @brief Reads the input voltage from the temperature sensor.
  *
@@ -73,22 +76,11 @@ double inputVoltage(const uint8_t pin)
  */
 void predictTemperature()
 {
-    if (!linReg.train(100))
-    {
-        errorLed.set();
-        serial::printf("Training failed!\n");
-        return;
-    }
+    const auto input{inputVoltage(tempSensorPin)};
     
-    for (const auto& input : trainingInput)
-    {
-        if(linReg.predict(input) < 0){
-            serial::printf("%d ", static_cast<int>(linReg.predict(input) - 0.5));   
-        }
-        else{
-            serial::printf("%d ", static_cast<int>(linReg.predict(input) + 0.5));
-        }            
-    }
+    const auto prediction{linReg.predict(input)};
+    const auto temperature{prediction >= 0 ? prediction + 0.5 : prediction - 0.5};
+    serial::printf("%d ", temperature);
 }
 
 /** @note Update this comment to describe what happens when the button is pressed
@@ -110,6 +102,7 @@ void buttonCallback(void)
      {
          /** @attention Add code to predict the temperature and reset the prediction timer!
           *             Also remove the Swedish comments. */
+         
          predictTemperature();      // Prediktera temperaturen.
          predictionTimer.restart(); // Nollst�ll 60-sekunderstimern.
      }
@@ -132,6 +125,7 @@ void predictionTimerCallback(void)
 {
     /** @attention Add code to predict the temperature! 
      *             Also remove the Swedish comment. */
+    
     predictTemperature();
     predictionTimer.restart();
 
@@ -147,9 +141,6 @@ inline void setup(void)
     serial::init();
 
     /** @note Consider using names */
-    const container::Vector<double> trainingInput{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-    const container::Vector<double> trainingOutput{-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50};       
-    ml::LinReg linReg{0.0, 0.0, trainingInput, trainingOutput, 0.1};
     
     predictionButton.addCallback(buttonCallback);
     debounceTimer.addCallback(debounceTimerCallback);

@@ -63,7 +63,7 @@ public:
      * @return Predicted output value
      ********************************************************************************/
     double predict(const double &input) const;
-
+    
     /********************************************************************************
      * @brief Train the linear regression model using the training data
      * 
