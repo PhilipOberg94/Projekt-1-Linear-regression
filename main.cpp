@@ -1,10 +1,30 @@
 /********************************************************************************
+ * @remark The code itself looks great and is very easy to read due to your 
+ *         descriptive names of variables and functions. 
+ * 
+ *         However, it appears that some code may be missing from this file. 
+ *         Did you push the correct revision? See the @attention-annotations
+ *         for more details.
+ * 
+ * @note Some comments are out of date and need to be updated. See the
+ *       added @note-annotations below.
+ * 
+ * @attention The system doesn't work as required! See the buttonCallback and
+ *            predictionTimerCallback functions; instead of code, there are 
+ *            Swedish comments.
+ ********************************************************************************/
+
+/** @note Update this comment; this is no longer a GPIO device driver demo! */
+/********************************************************************************
  * @brief Demonstration of GPIO device drivers in C++. 
  ********************************************************************************/
+
+/** @note Consider including the header files in alphabetical order. Also, update 
+ *        the "LinReg.h" directive after the name is changed to lin_reg.h. */
 #include "gpio.h"
 #include "timer.h"
 #include "watchdog.h"
-#include "LinReg.h"
+#include "LinReg.h" 
 #include "serial.h"
 #include "adc.h"
 
@@ -18,10 +38,10 @@ namespace
  * @param tempSensorPin The analog pin to read the temperature sensor.
  * @param Vcc The supply voltage of the temperature sensor.
  ********************************************************************************/
-
 constexpr uint8_t tempSensorPin{2}; // Temperature sensor connected to pin 2.
 constexpr double Vcc{5.0};          // Supply voltage of the temperature sensor.
 
+/** @note Update this comment to describe the devices used in your new system. */
 /********************************************************************************
  * @brief Devices used in the embedded system.
  *
@@ -43,12 +63,14 @@ Timer predictionTimer{Timer::Circuit::predictionTimer, 60000};
  *
  * @return The input voltage in volts.
  ********************************************************************************/
-
 double inputVoltage(const uint8_t pin) 
 {
     return adc::getDutyCycle(pin) * Vcc;
 }
 
+/** @note Update this comment to describe what happens when the button is pressed
+ *        in your new system, i.e. the temperature is predicted and the prediction
+ *        timer is restarted. */
 /********************************************************************************
  * @brief Callback routine called when predictionButton is pressed or released.
  *        Every time predictionButton is pressed, predictionTimer is toggled, which indirectly
@@ -63,6 +85,8 @@ void buttonCallback(void)
 
      if (predictionButton.read())
      {
+         /** @attention Add code to predict the temperature and reset the prediction timer!
+          *             Also remove the Swedish comments. */
          // Prediktera temperaturen.
          // Nollst�ll 60-sekunderstimern.
      }
@@ -83,6 +107,8 @@ void debounceTimerCallback(void)
  ********************************************************************************/
 void predictionTimerCallback(void) 
 {
+    /** @attention Add code to predict the temperature! 
+     *             Also remove the Swedish comment. */
     // Efter 60 sekunder, prediktera temperaturen.
 }
 
@@ -93,14 +119,12 @@ void predictionTimerCallback(void)
 inline void setup(void) 
 {
     adc::init();
-
     serial::init();
 
-
+    /** @note Consider using names */
     const container::Vector<double> trainingInput{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-    const container::Vector<double> treiningOutput{-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50};
-        
-    ml::LinReg linReg{0.0, 0.0, trainingInput, treiningOutput, 0.1};
+    const container::Vector<double> trainingOutput{-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50};       
+    ml::LinReg linReg{0.0, 0.0, trainingInput, trainingOutput, 0.1};
     
 
     if (!linReg.train(100))
@@ -109,7 +133,6 @@ inline void setup(void)
         serial::printf("Training failed!\n");
         return;
     }
-    
     
     for (const auto& input : trainingInput)
     {
@@ -148,4 +171,3 @@ int main(void)
     }
     return 0;
 }
-
