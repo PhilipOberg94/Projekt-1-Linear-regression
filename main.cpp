@@ -68,6 +68,29 @@ double inputVoltage(const uint8_t pin)
     return adc::getDutyCycle(pin) * Vcc;
 }
 
+/**
+ * @brief Predicts the temperature based on the input voltage.
+ */
+void predictTemperature()
+{
+    if (!linReg.train(100))
+    {
+        errorLed.set();
+        serial::printf("Training failed!\n");
+        return;
+    }
+    
+    for (const auto& input : trainingInput)
+    {
+        if(linReg.predict(input) < 0){
+            serial::printf("%d ", static_cast<int>(linReg.predict(input) - 0.5));   
+        }
+        else{
+            serial::printf("%d ", static_cast<int>(linReg.predict(input) + 0.5));
+        }            
+    }
+}
+
 /** @note Update this comment to describe what happens when the button is pressed
  *        in your new system, i.e. the temperature is predicted and the prediction
  *        timer is restarted. */
@@ -87,8 +110,8 @@ void buttonCallback(void)
      {
          /** @attention Add code to predict the temperature and reset the prediction timer!
           *             Also remove the Swedish comments. */
-         // Prediktera temperaturen.
-         // Nollst�ll 60-sekunderstimern.
+         predictTemperature();      // Prediktera temperaturen.
+         predictionTimer.restart(); // Nollst�ll 60-sekunderstimern.
      }
 }
 
@@ -109,7 +132,9 @@ void predictionTimerCallback(void)
 {
     /** @attention Add code to predict the temperature! 
      *             Also remove the Swedish comment. */
-    // Efter 60 sekunder, prediktera temperaturen.
+    predictTemperature();
+    predictionTimer.restart();
+
 }
 
 /********************************************************************************
@@ -125,24 +150,6 @@ inline void setup(void)
     const container::Vector<double> trainingInput{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
     const container::Vector<double> trainingOutput{-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50};       
     ml::LinReg linReg{0.0, 0.0, trainingInput, trainingOutput, 0.1};
-    
-
-    if (!linReg.train(100))
-    {
-        errorLed.set();
-        serial::printf("Training failed!\n");
-        return;
-    }
-    
-    for (const auto& input : trainingInput)
-    {
-        if(linReg.predict(input) < 0){
-            serial::printf("%d ", static_cast<int>(linReg.predict(input) - 0.5));   
-        }
-        else{
-            serial::printf("%d ", static_cast<int>(linReg.predict(input) + 0.5));
-        }            
-    }
     
     predictionButton.addCallback(buttonCallback);
     debounceTimer.addCallback(debounceTimerCallback);
