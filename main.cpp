@@ -103,8 +103,8 @@ void buttonCallback(void)
          /** @attention Add code to predict the temperature and reset the prediction timer!
           *             Also remove the Swedish comments. */
          
-         predictTemperature();      // Prediktera temperaturen.
-         predictionTimer.restart(); // Nollst�ll 60-sekunderstimern.
+         predictTemperature();      // Predicts temperature
+         predictionTimer.restart(); // Reset the 60 sec timer.
      }
 }
 
