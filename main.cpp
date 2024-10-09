@@ -146,6 +146,7 @@ inline void setup(void)
     debounceTimer.addCallback(debounceTimerCallback);
     predictionTimer.addCallback(predictionTimerCallback);
     predictionButton.enableInterrupt();
+    linReg.train(100);
     
     watchdog::init(watchdog::Timeout::Timeout1024ms);
     watchdog::enableSystemReset();
