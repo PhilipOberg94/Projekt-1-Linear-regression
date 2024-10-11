@@ -26,3 +26,12 @@ The library also includes miscellaneous utility functions, type traits etc.
 ## Usage 
 This library must be opened in a Windows environment to build.  
 Copy the library into a Windows path, such as the C drive, before building.
+
+## Review questions
+What did we learn? - We have learned about basic linear regression, how to program i C++ and to interpret an existing code base.
+
+What was hard/easy? - The hardest thing was to interpret an existing code base, and to correctly use the built in functions to implement in our model.
+
+What would we wanted to know more of before the project? - What we would have liked to worked more with is the basics of C++, like the syntax and OOP.
+
+Other comments -  We look forward to work with a more advanced model.
