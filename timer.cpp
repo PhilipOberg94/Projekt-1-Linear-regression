@@ -10,15 +10,15 @@ namespace driver
 
 struct ControlBits 
 {
-	static constexpr uint8_t debounceTimer{(1 << CS01)};
-	static constexpr uint8_t predictionTimer{(1 << CS11) | (1 << WGM12)};
+	static constexpr uint8_t Timer0{(1 << CS01)};
+	static constexpr uint8_t Timer1{(1 << CS11) | (1 << WGM12)};
 	static constexpr uint8_t Timer2{(1 << CS21)};
 };
 
 struct TimerIndex 
 {
-	static constexpr uint8_t debounceTimer{0U};
-	static constexpr uint8_t predictionTimer{1U};
+	static constexpr uint8_t Timer0{0U};
+	static constexpr uint8_t Timer1{1U};
 	static constexpr uint8_t Timer2{2U};
 };
 
@@ -45,21 +45,21 @@ void generateCallback(const uint8_t timerIndex)
 } // namespace
 
 // -----------------------------------------------------------------------------
-Timer::Hardware Timer::myHwdebounceTimer
+Timer::Hardware Timer::myHwTimer0
 {
     .counter = 0U,
     .maskReg = &TIMSK0,
     .maskBit = TOIE0,
-    .index = TimerIndex::debounceTimer
+    .index = TimerIndex::Timer0
 };
 
 // -----------------------------------------------------------------------------
-Timer::Hardware Timer::myHwpredictionTimer
+Timer::Hardware Timer::myHwTimer1
 {
     .counter = 0U,
 	.maskReg = &TIMSK1,
     .maskBit = OCIE1A,
-	.index = TimerIndex::predictionTimer
+	.index = TimerIndex::Timer1
 };
 
 // -----------------------------------------------------------------------------
@@ -195,18 +195,18 @@ bool Timer::hasElapsed()
 // -----------------------------------------------------------------------------
 bool Timer::initHardware() 
 {
-	if (myCircuit == Timer::Circuit::debounceTimer) 
+	if (myCircuit == Timer::Circuit::Timer0) 
 	{
-	    if (timers[TimerIndex::debounceTimer] != nullptr) { return false; }
-	    TCCR0B = ControlBits::debounceTimer;
-	    myHardware = &myHwdebounceTimer;
+	    if (timers[TimerIndex::Timer0] != nullptr) { return false; }
+	    TCCR0B = ControlBits::Timer0;
+	    myHardware = &myHwTimer0;
 	} 
-	else if (myCircuit == Timer::Circuit::predictionTimer) 
+	else if (myCircuit == Timer::Circuit::Timer1) 
 	{
-		if (timers[TimerIndex::predictionTimer] != nullptr) { return false; }
-		TCCR1B = ControlBits::predictionTimer;
-		OCR1A = predictionTimerMaxCount;
-		myHardware = &myHwpredictionTimer;
+		if (timers[TimerIndex::Timer1] != nullptr) { return false; }
+		TCCR1B = ControlBits::Timer1;
+		OCR1A = Timer1MaxCount;
+		myHardware = &myHwTimer1;
 	} 
 	else if (myCircuit == Timer::Circuit::Timer2) 
 	{
@@ -221,11 +221,11 @@ bool Timer::initHardware()
 // -----------------------------------------------------------------------------
 void Timer::disableHardware() 
 {
-	if (myCircuit == Timer::Circuit::debounceTimer) 
+	if (myCircuit == Timer::Circuit::Timer0) 
     {
 		TCCR0B = 0x00;
 	} 
-	else if (myCircuit == Timer::Circuit::predictionTimer) 
+	else if (myCircuit == Timer::Circuit::Timer1) 
 	{
 		TCCR1B = 0x00;
 		OCR1A = 0x00;
@@ -249,13 +249,13 @@ uint32_t Timer::getMaxCount(const uint16_t elapseTimeMs)
 // -----------------------------------------------------------------------------
 ISR (TIMER0_OVF_vect) 
 {
-    generateCallback(TimerIndex::debounceTimer);
+    generateCallback(TimerIndex::Timer0);
 }
 
 // -----------------------------------------------------------------------------
 ISR (TIMER1_COMPA_vect) 
 {
-    generateCallback(TimerIndex::predictionTimer);
+    generateCallback(TimerIndex::Timer1);
 }
 
 // -----------------------------------------------------------------------------

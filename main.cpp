@@ -53,8 +53,8 @@ constexpr double Vcc{5.0};          // Supply voltage of the temperature sensor.
  ********************************************************************************/
 GPIO errorLed{9, GPIO::Direction::Output};
 GPIO predictionButton{13, GPIO::Direction::InputPullup};
-Timer debounceTimer{Timer::Circuit::debounceTimer, 300};        
-Timer predictionTimer{Timer::Circuit::predictionTimer, 60000}; 
+Timer debounceTimer{Timer::Circuit::Timer0, 300};        
+Timer predictionTimer{Timer::Circuit::Timer1, 60000}; 
 const container::Vector<double> trainingInput{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
 const container::Vector<double> trainingOutput{-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50}; 
 ml::LinReg linReg{0.0, 0.0, trainingInput, trainingOutput, 0.1};
@@ -77,10 +77,9 @@ double inputVoltage(const uint8_t pin)
 void predictTemperature()
 {
     const auto input{inputVoltage(tempSensorPin)};
-    
     const auto prediction{linReg.predict(input)};
-    const auto temperature{prediction >= 0 ? prediction + 0.5 : prediction - 0.5};
-    serial::printf("%d ", temperature);
+    const int temperature{prediction >= 0 ? prediction + 0.5 : prediction - 0.5};
+    serial::printf("Temp: %d\n", temperature);
 }
 
 /** @note Update this comment to describe what happens when the button is pressed
@@ -127,8 +126,6 @@ void predictionTimerCallback(void)
      *             Also remove the Swedish comment. */
     
     predictTemperature();
-    predictionTimer.restart();
-
 }
 
 /********************************************************************************
@@ -146,7 +143,8 @@ inline void setup(void)
     debounceTimer.addCallback(debounceTimerCallback);
     predictionTimer.addCallback(predictionTimerCallback);
     predictionButton.enableInterrupt();
-    linReg.train(100);
+    linReg.train(40);
+    predictionTimer.start();
     
     watchdog::init(watchdog::Timeout::Timeout1024ms);
     watchdog::enableSystemReset();

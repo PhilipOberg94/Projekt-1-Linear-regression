@@ -22,8 +22,8 @@ class Timer
      ********************************************************************************/
     enum class Circuit 
     { 
-        debounceTimer, 
-        predictionTimer, 
+        Timer0, 
+        Timer1,
         Timer2  
     };
 
@@ -180,9 +180,9 @@ class Timer
     void disableHardware();
     static uint32_t getMaxCount(const uint16_t elapseTimeMs);
 
-    static constexpr uint16_t predictionTimerMaxCount{256};
+    static constexpr uint16_t Timer1MaxCount{256};
     static constexpr double InterruptPeriodMs{0.128};
-    static Hardware myHwdebounceTimer, myHwpredictionTimer, myHwTimer2;
+    static Hardware myHwTimer0, myHwTimer1, myHwTimer2;
 
     Hardware* myHardware{nullptr};
     Circuit myCircuit{};
