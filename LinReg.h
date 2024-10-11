@@ -13,12 +13,14 @@
 #include "vector.h"
 #include "serial.h"
 
-namespace ml { /** @note Put the bracket on a new line. */
+namespace ml 
+{
 
 /********************************************************************************
  * @brief Class for Linear Regression model
  ********************************************************************************/
-class LinReg { /** @note Put the bracket on a new line. */
+class LinReg 
+{
 public:
 
     /********************************************************************************
@@ -73,11 +75,11 @@ public:
     bool train(const int &epochs);
 
 private:
-    double myBias;                             // Bias term of the model
-    double myWeight;                           // Weight term of the model
-    double myLearningRate;                     // Learning rate for the model
-    const container::Vector<double> myTrainingInput;  // Training input data
-    const container::Vector<double> myTrainingOutput; // Training output data
+    double myBias;                            
+    double myWeight;                           
+    double myLearningRate;                     
+    const container::Vector<double> myTrainingInput;  
+    const container::Vector<double> myTrainingOutput; 
 
 };
 

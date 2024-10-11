@@ -1,6 +1,5 @@
-
 /********************************************************************************
- * @brief Demonstration of GPIO device drivers in C++. 
+ * @brief Temperature prediction system in C++
  ********************************************************************************/
 
 #include "adc.h"
@@ -36,6 +35,14 @@ GPIO errorLed{9, GPIO::Direction::Output};
 GPIO predictionButton{13, GPIO::Direction::InputPullup};
 Timer debounceTimer{Timer::Circuit::Timer0, 300};        
 Timer predictionTimer{Timer::Circuit::Timer1, 60000}; 
+
+/********************************************************************************
+ * @brief Linear regression model and training data.
+ *
+ * @param trainingInput Vector of training input values.
+ * @param trainingOutput Vector of training output values.
+ * @param linReg Linear regression model used to predict the temperature.
+ ********************************************************************************/
 const container::Vector<double> trainingInput{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
 const container::Vector<double> trainingOutput{-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50}; 
 ml::LinReg linReg{0.0, 0.0, trainingInput, trainingOutput, 0.1};
@@ -52,9 +59,9 @@ double inputVoltage(const uint8_t pin)
     return adc::getDutyCycle(pin) * Vcc;
 }
 
-/**
+/********************************************************************************
  * @brief Predicts the temperature based on the input voltage.
- */
+ ********************************************************************************/
 void predictTemperature()
 {
     const auto input{inputVoltage(tempSensorPin)};
@@ -65,8 +72,7 @@ void predictTemperature()
 
 /********************************************************************************
  * @brief Callback routine called when predictionButton is pressed or released.
- *        Every time predictionButton is pressed, predictionTimer is toggled, which indirectly
- *        toggles the LED (since predictionTimer is responsible for toggling errorLed).
+ *        Every time predictionButton is pressed, the temperature is predicted.
  *        Pin change interrupts are disabled for 300 ms on the button's I/O port
  *        to reduce the effects of contact bounces.
  ********************************************************************************/
@@ -98,20 +104,20 @@ void debounceTimerCallback(void)
  ********************************************************************************/
 void predictionTimerCallback(void) 
 {
-    
     predictTemperature();
 }
 
 /********************************************************************************
- * @brief Sets callback routines, enabled pin change interrupt on predictionButton and
- *        enables the watchdog timer in system reset mode.
+ * @brief Sets callback routines, enabled pin change interrupt on 
+ *        predictionButton and enables the watchdog timer in system reset mode. 
+ *        Trains the linear regression model.
  ********************************************************************************/
 inline void setup(void) 
 {
     adc::init();
     serial::init();
 
-    if (!linReg.train(0))
+    if (!linReg.train(40))
     {
         errorLed.set();
         return;
@@ -130,7 +136,7 @@ inline void setup(void)
 } // namespace
 
 /********************************************************************************
- * @brief Perform a setup of the system, then running the program as long as
+ * @brief Performs a setup of the system, then running the program as long as
  *        voltage is supplied. The hardware is interrupt controlled, hence the
  *        while loop is almost empty. If the program gets stuck anywhere, the
  *        watchdog timer won't be reset in time and the program will then restart.

@@ -1,15 +1,7 @@
-/********************************************************************************
- * @remark The implementation details look great! Awesome job!
- * 
- * @note 
- * - This file should be renamed "lin_reg.cpp" to remain consistent with the
- *   naming convention used in the rest of the repo. 
- * - Put the bracket at line 12 on a new line.
- ********************************************************************************/
-/** @note Update this include directive after the name of the header is updated. */
 #include "LinReg.h" 
 
-namespace ml { /** @note Put the bracket on a new line. */
+namespace ml 
+{
 
 /********************************************************************************
  * @brief The constructor of the linear regression model
