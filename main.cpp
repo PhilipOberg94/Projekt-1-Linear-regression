@@ -1,32 +1,14 @@
-/********************************************************************************
- * @remark The code itself looks great and is very easy to read due to your 
- *         descriptive names of variables and functions. 
- * 
- *         However, it appears that some code may be missing from this file. 
- *         Did you push the correct revision? See the @attention-annotations
- *         for more details.
- * 
- * @note Some comments are out of date and need to be updated. See the
- *       added @note-annotations below.
- * 
- * @attention The system doesn't work as required! See the buttonCallback and
- *            predictionTimerCallback functions; instead of code, there are 
- *            Swedish comments.
- ********************************************************************************/
 
-/** @note Update this comment; this is no longer a GPIO device driver demo! */
 /********************************************************************************
  * @brief Demonstration of GPIO device drivers in C++. 
  ********************************************************************************/
 
-/** @note Consider including the header files in alphabetical order. Also, update 
- *        the "LinReg.h" directive after the name is changed to lin_reg.h. */
-#include "gpio.h"
-#include "timer.h"
-#include "watchdog.h"
-#include "LinReg.h" 
-#include "serial.h"
 #include "adc.h"
+#include "gpio.h"
+#include "LinReg.h" 
+#include "timer.h"
+#include "serial.h"
+#include "watchdog.h"
 
 using namespace driver;
 
@@ -38,17 +20,16 @@ namespace
  * @param tempSensorPin The analog pin to read the temperature sensor.
  * @param Vcc The supply voltage of the temperature sensor.
  ********************************************************************************/
-constexpr uint8_t tempSensorPin{2}; // Temperature sensor connected to pin 2.
-constexpr double Vcc{5.0};          // Supply voltage of the temperature sensor.
+constexpr uint8_t tempSensorPin{2};
+constexpr double Vcc{5.0};          
 
-/** @note Update this comment to describe the devices used in your new system. */
 /********************************************************************************
  * @brief Devices used in the embedded system.
  *
  * @param errorLed    LED connected to pin 9, blinking every 100 ms when enabled.
  * @param predictionButton Button connected to pin 13, used to toggle the LED.
  * @param debounceTimer  Timer used to reduced the effect of contact bounces when
- *                pressing the button.
+ *                       pressing the button.
  * @param predictionTimer  Timer used to toggle the LED every 100 ms when enabled.
  ********************************************************************************/
 GPIO errorLed{9, GPIO::Direction::Output};
@@ -82,9 +63,6 @@ void predictTemperature()
     serial::printf("Temp: %d\n", temperature);
 }
 
-/** @note Update this comment to describe what happens when the button is pressed
- *        in your new system, i.e. the temperature is predicted and the prediction
- *        timer is restarted. */
 /********************************************************************************
  * @brief Callback routine called when predictionButton is pressed or released.
  *        Every time predictionButton is pressed, predictionTimer is toggled, which indirectly
@@ -99,11 +77,9 @@ void buttonCallback(void)
 
      if (predictionButton.read())
      {
-         /** @attention Add code to predict the temperature and reset the prediction timer!
-          *             Also remove the Swedish comments. */
          
-         predictTemperature();      // Predicts temperature
-         predictionTimer.restart(); // Reset the 60 sec timer.
+         predictTemperature();      
+         predictionTimer.restart(); 
      }
 }
 
@@ -122,8 +98,6 @@ void debounceTimerCallback(void)
  ********************************************************************************/
 void predictionTimerCallback(void) 
 {
-    /** @attention Add code to predict the temperature! 
-     *             Also remove the Swedish comment. */
     
     predictTemperature();
 }
@@ -137,13 +111,16 @@ inline void setup(void)
     adc::init();
     serial::init();
 
-    /** @note Consider using names */
+    if (!linReg.train(0))
+    {
+        errorLed.set();
+        return;
+    }
     
     predictionButton.addCallback(buttonCallback);
     debounceTimer.addCallback(debounceTimerCallback);
     predictionTimer.addCallback(predictionTimerCallback);
     predictionButton.enableInterrupt();
-    linReg.train(40);
     predictionTimer.start();
     
     watchdog::init(watchdog::Timeout::Timeout1024ms);
