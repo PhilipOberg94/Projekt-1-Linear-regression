@@ -83,7 +83,6 @@ void buttonCallback(void)
 
      if (predictionButton.read())
      {
-         
          predictTemperature();      
          predictionTimer.restart(); 
      }
