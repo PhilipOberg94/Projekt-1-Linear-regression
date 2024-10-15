@@ -192,10 +192,10 @@
     <Compile Include="eeprom_impl.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="LinReg.cpp">
+    <Compile Include="lin_reg.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="LinReg.h">
+    <Compile Include="lin_reg.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="list.h">

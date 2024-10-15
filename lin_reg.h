@@ -1,12 +1,5 @@
 /********************************************************************************
- * @remark The code is very readable due to descriptive names of methods (and
- *         member variables). The documentation is also exemplary. Great job!
- * 
- * @note 
- * - This file should be renamed "lin_reg.h" to remain consistent with the
- *   naming convention used in the rest of the repo. 
- * - Put brackets on a separate line, as is done throughout the repo. See the
- *   added @note-annotations below.
+ * @brief Linear regression model implementation
  ********************************************************************************/
 #pragma once
 

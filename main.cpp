@@ -4,7 +4,7 @@
 
 #include "adc.h"
 #include "gpio.h"
-#include "LinReg.h" 
+#include "lin_reg.h"
 #include "timer.h"
 #include "serial.h"
 #include "watchdog.h"
@@ -83,7 +83,6 @@ void buttonCallback(void)
 
      if (predictionButton.read())
      {
-         
          predictTemperature();      
          predictionTimer.restart(); 
      }
