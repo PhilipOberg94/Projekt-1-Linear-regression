@@ -1,4 +1,4 @@
-#include "LinReg.h" 
+#include "lin_reg.h" 
 
 namespace ml 
 {
